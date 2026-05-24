@@ -1,4 +1,10 @@
 fastapi
 uvicorn[standard]
-sqlalchemy
 python-dotenv
+sqlalchemy
+alembic
+psycopg[binary]
+pydantic-settings
+authlib
+itsdangerous
+python-multipart
