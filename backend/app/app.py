@@ -4,7 +4,9 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from app.core.config import settings
 
-app = FastAPI(title="OAuth2 Cybersecurity Project")
+from app.routers import users
+
+app = FastAPI(title=settings.APP_NAME)
 
 app.add_middleware(
     SessionMiddleware,
@@ -22,6 +24,7 @@ app.add_middleware(
 )
 
 
+app.include_router(users.router, prefix="/users", tags=["Users"])
 
 
 @app.get("/")
