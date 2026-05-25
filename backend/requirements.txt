@@ -6,5 +6,6 @@ alembic
 psycopg[binary]
 pydantic-settings
 authlib
+httpx
 itsdangerous
 python-multipart

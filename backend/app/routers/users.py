@@ -1,13 +1,11 @@
 from fastapi import APIRouter
 
+from app.auth.dependencies import CurrentUser
+from app.schemas.user import UserResponse
+
 router = APIRouter()
 
-@router.get("/me")
-def get_me():
-    return {
-        "id": 1,
-        "email": "test@example.com",
-        "name": "Test User",
-        "role": "user",
-        "is_active": True
-    }
+
+@router.get("/me", response_model=UserResponse)
+def get_me(current_user: CurrentUser):
+    return current_user
