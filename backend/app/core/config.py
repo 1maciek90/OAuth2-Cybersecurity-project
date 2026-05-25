@@ -14,6 +14,15 @@ class Settings(BaseSettings):
 
     GOOGLE_CLIENT_ID: str = ""
     GOOGLE_CLIENT_SECRET: str = ""
+    ADMIN_EMAILS: str = ""
+
+    @property
+    def admin_emails(self) -> set[str]:
+        return {
+            email.strip().casefold()
+            for email in self.ADMIN_EMAILS.split(",")
+            if email.strip()
+        }
 
     model_config = SettingsConfigDict(
         env_file=".env",

@@ -7,10 +7,12 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from app.auth.csrf import CsrfProtectedUser, issue_csrf_token
+from app.auth.dependencies import CurrentUser
 from app.auth.oauth import oauth
 from app.core.config import settings
 from app.db.database import get_db
-from app.models.user import User
+from app.models.user import User, UserRole
 
 
 router = APIRouter()
@@ -73,6 +75,9 @@ async def google_callback(request: Request, db: DbSession):
         user.name = user_info.get("name")
         user.picture = user_info.get("picture")
 
+    if email.casefold() in settings.admin_emails:
+        user.role = UserRole.ADMIN
+
     try:
         db.commit()
     except IntegrityError as exc:
@@ -91,10 +96,16 @@ async def google_callback(request: Request, db: DbSession):
 
     request.session.clear()
     request.session["user_id"] = user.id
+    issue_csrf_token(request)
     return RedirectResponse(url=settings.FRONTEND_URL, status_code=status.HTTP_302_FOUND)
 
 
+@router.get("/csrf")
+def get_csrf_token(request: Request, current_user: CurrentUser):
+    return {"csrf_token": issue_csrf_token(request)}
+
+
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
-def logout(request: Request) -> Response:
+def logout(request: Request, current_user: CsrfProtectedUser) -> Response:
     request.session.clear()
     return Response(status_code=status.HTTP_204_NO_CONTENT)

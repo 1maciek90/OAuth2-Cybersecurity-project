@@ -5,6 +5,7 @@ from sqlalchemy import engine_from_config, pool
 
 from app.core.config import settings
 from app.db.base import Base
+from app.models.post import Post
 from app.models.user import User
 
 
@@ -18,6 +19,7 @@ target_metadata = Base.metadata
 
 # Keep the model imported so its table is included in migration autogeneration.
 assert User.__table__ is not None
+assert Post.__table__ is not None
 
 
 def run_migrations_offline() -> None:
