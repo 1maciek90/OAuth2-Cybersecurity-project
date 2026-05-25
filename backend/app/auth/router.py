@@ -30,8 +30,7 @@ def _ensure_google_is_configured() -> None:
 @router.get("/google/login")
 async def google_login(request: Request):
     _ensure_google_is_configured()
-    redirect_uri = f"{settings.BACKEND_URL.rstrip('/')}/auth/google/callback"
-    return await oauth.google.authorize_redirect(request, redirect_uri)
+    return await oauth.google.authorize_redirect(request, settings.GOOGLE_REDIRECT_URI)
 
 
 @router.get("/google/callback")

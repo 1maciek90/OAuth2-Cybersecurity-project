@@ -1,1 +1,70 @@
 @import "tailwindcss";
+
+:root {
+	font-family: Inter, "Avenir Next", "Segoe UI", Arial, sans-serif;
+	color: #0f172a;
+	background: #f8fafc;
+	font-synthesis: none;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	min-width: 320px;
+}
+
+button {
+	cursor: pointer;
+}
+
+button:disabled {
+	cursor: not-allowed;
+}
+
+.action-primary {
+	border-radius: 0.75rem;
+	background: #ecfeff;
+	padding: 0.55rem 0.9rem;
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: #0e7490;
+	transition: background-color 150ms ease;
+}
+
+.action-primary:hover {
+	background: #cffafe;
+}
+
+.action-secondary {
+	border-radius: 0.75rem;
+	background: #f1f5f9;
+	padding: 0.55rem 0.9rem;
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: #475569;
+	transition: background-color 150ms ease;
+}
+
+.action-secondary:hover {
+	background: #e2e8f0;
+}
+
+.action-danger {
+	border-radius: 0.75rem;
+	background: #fff1f2;
+	padding: 0.55rem 0.9rem;
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: #be123c;
+	transition: background-color 150ms ease;
+}
+
+.action-danger:hover {
+	background: #ffe4e6;
+}
