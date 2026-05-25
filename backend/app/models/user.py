@@ -45,11 +45,5 @@ class User(Base):
     )
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
-    posts: Mapped[list[Post]] = relationship(
-        back_populates="author",
-        foreign_keys="Post.author_id",
-    )
-    moderated_posts: Mapped[list[Post]] = relationship(
-        back_populates="moderated_by",
-        foreign_keys="Post.moderated_by_id",
-    )
+    posts: Mapped[list[Post]] = relationship(back_populates="author", foreign_keys="Post.author_id")
+    moderated_posts: Mapped[list[Post]] = relationship(back_populates="moderated_by", foreign_keys="Post.moderated_by_id")

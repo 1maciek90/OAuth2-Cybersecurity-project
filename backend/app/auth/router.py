@@ -40,34 +40,20 @@ async def google_callback(request: Request, db: DbSession):
     try:
         token = await oauth.google.authorize_access_token(request)
     except OAuthError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Google authentication failed",
-        ) from exc
+        raise HTTPException( status_code=status.HTTP_401_UNAUTHORIZED, detail="Google authentication failed") from exc
 
     user_info = token.get("userinfo")
     if not user_info:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Google did not return user identity information",
-        )
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Google did not return user information")
 
     google_sub = user_info.get("sub")
     email = user_info.get("email")
     if not google_sub or not email or not user_info.get("email_verified", False):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="A verified Google email address is required",
-        )
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="A verified Google email address is required")
 
     user = db.scalar(select(User).where(User.google_sub == google_sub))
     if user is None:
-        user = User(
-            google_sub=google_sub,
-            email=email,
-            name=user_info.get("name"),
-            picture=user_info.get("picture"),
-        )
+        user = User(google_sub=google_sub, email=email, name=user_info.get("name"), picture=user_info.get("picture"))
         db.add(user)
     else:
         user.email = email
@@ -81,17 +67,11 @@ async def google_callback(request: Request, db: DbSession):
         db.commit()
     except IntegrityError as exc:
         db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="An account with this email already exists",
-        ) from exc
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="An account with this email already exists") from exc
 
     db.refresh(user)
     if not user.is_active:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="User account is inactive",
-        )
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User account is inactive")
 
     request.session.clear()
     request.session["user_id"] = user.id

@@ -49,9 +49,7 @@ class Post(Base):
             create_constraint=False,
             values_callable=lambda values: [visibility.value for visibility in values],
         ),
-        default=PostVisibility.PUBLIC,
-        index=True,
-    )
+        default=PostVisibility.PUBLIC, index=True)
     author_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
     moderation_status: Mapped[PostModerationStatus] = mapped_column(
         SqlEnum(
@@ -60,40 +58,14 @@ class Post(Base):
             native_enum=False,
             create_constraint=False,
             values_callable=lambda values: [state.value for state in values],
-        ),
-        default=PostModerationStatus.VISIBLE,
-        index=True,
-    )
+            ), 
+            default=PostModerationStatus.VISIBLE, index=True,)
     moderation_reason: Mapped[str | None] = mapped_column(String(500), nullable=True)
-    moderated_by_id: Mapped[int | None] = mapped_column(
-        ForeignKey("users.id"),
-        nullable=True,
-        index=True,
-    )
-    moderated_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True),
-        nullable=True,
-    )
-    published_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True),
-        nullable=True,
-        index=True,
-    )
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-    )
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        onupdate=func.now(),
-    )
+    moderated_by_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True, index=True)
+    moderated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
-    author: Mapped[User] = relationship(
-        back_populates="posts",
-        foreign_keys=[author_id],
-    )
-    moderated_by: Mapped[User | None] = relationship(
-        back_populates="moderated_posts",
-        foreign_keys=[moderated_by_id],
-    )
+    author: Mapped[User] = relationship(back_populates="posts", foreign_keys=[author_id])
+    moderated_by: Mapped[User | None] = relationship(back_populates="moderated_posts", foreign_keys=[moderated_by_id])
