@@ -1,42 +1,17 @@
-import { useEffect, useState } from "react";
-import { ApiError, getCurrentUser } from "./api";
-import Dashboard from "./components/Dashboard";
-import LoginPage from "./components/LoginPage";
-import type { User } from "./types";
+import SessionLoading from "./components/common/SessionLoading";
+import { useSession } from "./hooks/useSession";
+import DashboardPage from "./pages/DashboardPage";
+import LoginPage from "./pages/LoginPage";
 
 function App() {
-	const [user, setUser] = useState<User | null>(null);
-	const [checkingSession, setCheckingSession] = useState(true);
-	const [sessionError, setSessionError] = useState<string | null>(null);
-
-	useEffect(() => {
-		getCurrentUser()
-			.then((authenticatedUser) => {
-				setUser(authenticatedUser);
-				setSessionError(null);
-			})
-			.catch((error: unknown) => {
-				setUser(null);
-				if (error instanceof ApiError && error.status !== 401) {
-					setSessionError(error.message);
-				}
-			})
-			.finally(() => setCheckingSession(false));
-	}, []);
+	const { user, checkingSession, sessionError, clearUser } = useSession();
 
 	if (checkingSession) {
-		return (
-			<div className="flex min-h-screen items-center justify-center bg-slate-950 text-slate-300">
-				<div className="text-center">
-					<div className="mx-auto mb-5 h-10 w-10 animate-spin rounded-full border-2 border-cyan-300 border-t-transparent" />
-					<p>Sprawdzanie bezpiecznej sesji...</p>
-				</div>
-			</div>
-		);
+		return <SessionLoading />;
 	}
 
 	if (user) {
-		return <Dashboard user={user} onLogout={() => setUser(null)} />;
+		return <DashboardPage user={user} onLogout={clearUser} />;
 	}
 
 	return (
